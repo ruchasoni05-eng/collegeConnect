@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Anonymous confession wall — share your thoughts freely.">
+  <title>Confession Wall — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/submit.html">Submit</a></li>
+        <li><a href="/track.html">Track</a></li>
+        <li><a href="/confessions.html" class="active">Confessions</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>🤫 Confession Wall</h1>
+      <p>Share your thoughts anonymously — no login required!</p>
+    </div>
+
+    <!-- Post Confession Form -->
+    <div class="card fade-in fade-in-delay-1 mb-32" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+      <form id="confession-form">
+        <div class="form-group mb-16">
+          <textarea id="confession-message" class="form-control" placeholder="Write your anonymous confession here... 🤫" required style="min-height: 100px;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" id="confess-btn" style="width: 100%;">
+          🕶️ Post Anonymously
+        </button>
+      </form>
+    </div>
+
+    <!-- Confessions List -->
+    <div class="grid-2 fade-in fade-in-delay-2" id="confessions-list">
+      <div class="empty-state" style="grid-column: 1 / -1;">
+        <p>Loading confessions...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/confessions.js"></script>
+</body>
+</html>

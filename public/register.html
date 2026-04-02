@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create your student account to submit feedback and track complaints.">
+  <title>Register — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="auth-container fade-in">
+      <div class="card auth-card">
+        <h2>Create Account</h2>
+        <p class="subtitle">Register to submit and track your feedback</p>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" class="form-control" placeholder="Enter your full name" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentId">Student ID</label>
+              <input type="text" id="studentId" class="form-control" placeholder="e.g., STU001" required>
+            </div>
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select id="department" class="form-control" required>
+                <option value="">Select Department</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Mechanical">Mechanical</option>
+                <option value="Civil">Civil</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="form-control" placeholder="your.email@college.edu" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Minimum 6 characters" minlength="6" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;" id="register-btn">
+            🚀 Create Account
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Already have an account? <a href="/login.html">Login here</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin dashboard — manage complaints, update statuses, and view analytics.">
+  <title>Admin Dashboard — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/admin-dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="/analytics.html">Analytics</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>🛡️ Admin Dashboard</h1>
+      <p>Manage complaints, feedback, and announcements</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="d-flex gap-16 mb-32 flex-wrap fade-in fade-in-delay-1">
+      <a href="/analytics.html" class="btn btn-primary">📊 View Analytics</a>
+      <button class="btn btn-success" onclick="toggleAnnouncementForm()">📢 New Announcement</button>
+      <button class="btn btn-secondary" onclick="adminLogout()">🚪 Logout</button>
+    </div>
+
+    <!-- Announcement Form (hidden by default) -->
+    <div class="card mb-32 fade-in" id="announcement-form-card" style="display:none;">
+      <div class="card-header">
+        <h3>📢 Post Announcement</h3>
+        <button class="btn btn-sm btn-secondary" onclick="toggleAnnouncementForm()">✕ Close</button>
+      </div>
+      <form id="announcement-form">
+        <div class="form-group">
+          <label for="ann-title">Title</label>
+          <input type="text" id="ann-title" class="form-control" placeholder="Announcement title" required>
+        </div>
+        <div class="form-group">
+          <label for="ann-message">Message</label>
+          <textarea id="ann-message" class="form-control" placeholder="Announcement details..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">📢 Post Announcement</button>
+      </form>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="filter-bar fade-in fade-in-delay-1">
+      <input type="text" id="search" class="form-control" placeholder="🔍 Search complaints...">
+      <select id="filter-status" class="form-control">
+        <option value="">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="In Review">In Review</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+      <select id="filter-category" class="form-control">
+        <option value="">All Categories</option>
+        <option value="Feedback">Feedback</option>
+        <option value="Complaint">Complaint</option>
+        <option value="Suggestion">Suggestion</option>
+      </select>
+      <select id="filter-department" class="form-control">
+        <option value="">All Departments</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="Information Technology">Information Technology</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Mechanical">Mechanical</option>
+        <option value="Civil">Civil</option>
+        <option value="Electrical">Electrical</option>
+        <option value="General">General</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="loadComplaints()">🔍 Filter</button>
+    </div>
+
+    <!-- Complaints Table -->
+    <div class="card fade-in fade-in-delay-2">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Student</th>
+              <th>Dept</th>
+              <th>Category</th>
+              <th>Subject</th>
+              <th>Sentiment</th>
+              <th>Priority</th>
+              <th>Upvotes</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="complaints-table">
+            <tr><td colspan="11" class="text-center" style="padding: 40px;">Loading complaints...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/adminDashboard.js"></script>
+</body>
+</html>

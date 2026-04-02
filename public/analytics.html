@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Analytics dashboard — visualize complaint trends, department stats, and more.">
+  <title>Analytics — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js CDN for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/admin-dashboard.html">Dashboard</a></li>
+        <li><a href="/analytics.html" class="active">Analytics</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>📊 Analytics Dashboard</h1>
+      <p>Visualize complaint trends and department performance</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid-4 mb-32 fade-in fade-in-delay-1" id="stats-cards">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-value" id="stat-total">-</div>
+        <div class="stat-label">Total Complaints</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value" id="stat-pending">-</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔍</div>
+        <div class="stat-value" id="stat-review">-</div>
+        <div class="stat-label">In Review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="stat-resolved">-</div>
+        <div class="stat-label">Resolved</div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid-2 mb-32 fade-in fade-in-delay-2">
+      <div class="chart-card">
+        <h3>📈 Monthly Trends</h3>
+        <div class="chart-wrapper">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>🏢 Department-wise Complaints</h3>
+        <div class="chart-wrapper">
+          <canvas id="departmentChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-32 fade-in fade-in-delay-3">
+      <div class="chart-card">
+        <h3>📊 Category Distribution</h3>
+        <div class="chart-wrapper">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>💬 Sentiment Analysis</h3>
+        <div class="chart-wrapper">
+          <canvas id="sentimentChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 fade-in fade-in-delay-4">
+      <div class="chart-card">
+        <h3>🚦 Status Breakdown</h3>
+        <div class="chart-wrapper">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>⚡ Priority Distribution</h3>
+        <div class="chart-wrapper">
+          <canvas id="priorityChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/analytics.js"></script>
+</body>
+</html>

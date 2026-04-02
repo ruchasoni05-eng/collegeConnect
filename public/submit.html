@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Submit feedback, complaints, or suggestions about your college experience.">
+  <title>Submit Feedback — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/submit.html" class="active">Submit</a></li>
+        <li><a href="/track.html">Track</a></li>
+        <li><a href="/confessions.html">Confessions</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>📝 Submit Feedback</h1>
+      <p>Share your feedback, complaint, or suggestion with the administration</p>
+    </div>
+
+    <div class="grid-2">
+      <!-- Submission Form -->
+      <div class="card fade-in fade-in-delay-1">
+        <form id="submit-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Type</label>
+              <select id="category" class="form-control" required>
+                <option value="">Select Type</option>
+                <option value="Feedback">📋 Feedback</option>
+                <option value="Complaint">⚠️ Complaint</option>
+                <option value="Suggestion">💡 Suggestion</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select id="department" class="form-control" required>
+                <option value="General">General</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Mechanical">Mechanical</option>
+                <option value="Civil">Civil</option>
+                <option value="Electrical">Electrical</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" class="form-control" placeholder="Brief subject of your submission" required>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" class="form-control" placeholder="Describe your feedback, complaint, or suggestion in detail..." required></textarea>
+          </div>
+
+          <div class="form-group" id="location-group" style="display:none;">
+            <label for="location">📍 Location (auto-filled via QR)</label>
+            <input type="text" id="location" class="form-control" readonly>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="anonymous">
+              <label for="anonymous" style="margin-bottom:0;">Submit anonymously</label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;" id="submit-btn">
+            🚀 Submit
+          </button>
+        </form>
+      </div>
+
+      <!-- Preview / AI Analysis Panel -->
+      <div>
+        <div class="card fade-in fade-in-delay-2 mb-24" id="result-card" style="display:none;">
+          <div class="card-header">
+            <h3>✅ Submission Result</h3>
+          </div>
+          <div id="result-content"></div>
+        </div>
+
+        <div class="card fade-in fade-in-delay-3">
+          <div class="card-header">
+            <h3>ℹ️ How It Works</h3>
+          </div>
+          <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8;">
+            <p>1️⃣ Choose the type of submission</p>
+            <p>2️⃣ Select the relevant department</p>
+            <p>3️⃣ Write a descriptive subject and message</p>
+            <p>4️⃣ Our AI will automatically analyze your submission</p>
+            <p>5️⃣ You'll receive a unique tracking ID</p>
+            <p>6️⃣ Track your complaint status anytime!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/submit.js"></script>
+</body>
+</html>

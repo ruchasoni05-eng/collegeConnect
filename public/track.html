@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your complaint status using your unique complaint ID.">
+  <title>Track Complaint — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/submit.html">Submit</a></li>
+        <li><a href="/track.html" class="active">Track</a></li>
+        <li><a href="/confessions.html">Confessions</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>🔍 Track Your Complaint</h1>
+      <p>Enter your complaint tracking ID to check the current status</p>
+    </div>
+
+    <div class="auth-container fade-in fade-in-delay-1">
+      <div class="card" style="padding: 32px;">
+        <div class="form-group">
+          <label for="trackId">Complaint Tracking ID</label>
+          <div style="display: flex; gap: 12px;">
+            <input type="text" id="trackId" class="form-control" placeholder="e.g., CMP-A1B2C3" style="flex:1;">
+            <button class="btn btn-primary" id="track-btn" onclick="trackComplaint()">🔍 Track</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tracking Result -->
+    <div class="card fade-in fade-in-delay-2 mt-24" id="result-card" style="display:none;">
+      <div id="result-content"></div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/track.js"></script>
+</body>
+</html>

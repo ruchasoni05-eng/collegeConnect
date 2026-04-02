@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin login portal for the College Feedback Management System.">
+  <title>Admin Login — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="auth-container fade-in">
+      <div class="card auth-card">
+        <h2>🔒 Admin Login</h2>
+        <p class="subtitle">Access the admin control panel</p>
+
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Enter admin username" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter admin password" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;" id="admin-login-btn">
+            🔐 Admin Login
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Are you a student? <a href="/login.html">Student Login</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/adminLogin.js"></script>
+</body>
+</html>
