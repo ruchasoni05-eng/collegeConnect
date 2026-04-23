@@ -132,3 +132,46 @@ exports.adminLogin = async (req, res) => {
     res.status(500).json({ message: 'Admin login failed.', error: error.message });
   }
 };
+
+/**
+ * Register a new admin
+ * POST /api/auth/admin-register
+ */
+exports.adminRegister = async (req, res) => {
+  try {
+    const { username, password, secretKey } = req.body;
+
+    // Check secret key
+    if (secretKey !== process.env.ADMIN_SECRET_KEY) {
+      return res.status(403).json({ message: 'Invalid secret key.' });
+    }
+
+    // Check if admin already exists
+    const existingAdmin = await Admin.findOne({ username });
+    if (existingAdmin) {
+      return res.status(400).json({ message: 'Admin with this username already exists.' });
+    }
+
+    // Create new admin
+    const admin = await Admin.create({ username, password, role: 'admin' });
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: admin._id, username: admin.username, role: 'admin' },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({
+      message: 'Admin registration successful!',
+      token,
+      admin: {
+        id: admin._id,
+        username: admin.username,
+        role: admin.role
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Admin registration failed.', error: error.message });
+  }
+};

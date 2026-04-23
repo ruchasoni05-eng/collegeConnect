@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   if (isLoggedIn()) {
-    window.location.href = '/dashboard.html';
+    window.location.replace('/dashboard.html');
     return;
   }
 
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Login successful! Redirecting...', 'success');
 
       setTimeout(() => {
-        window.location.href = '/dashboard.html';
+        window.location.replace('/dashboard.html');
       }, 1000);
     } catch (error) {
       showToast(error.message, 'error');

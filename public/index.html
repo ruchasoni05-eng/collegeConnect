@@ -18,6 +18,7 @@
       <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">☰</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="/" class="active">Home</a></li>
+        <li><a href="/public-board.html">Public Board</a></li>
         <li><a href="/submit.html">Submit</a></li>
         <li><a href="/track.html">Track</a></li>
         <li><a href="/confessions.html">Confessions</a></li>
@@ -33,17 +34,37 @@
   <main class="main-content">
     <!-- Hero Section -->
     <section class="hero fade-in">
-      <h1>🎓 Your Voice Matters</h1>
-      <p>Submit feedback, complaints, and suggestions to help improve our college. Track your submissions in real-time.
-      </p>
-      <div class="hero-actions">
-        <a href="/submit.html" class="btn btn-outline">📝 Submit Feedback</a>
-        <a href="/track.html" class="btn btn-outline">🔍 Track Complaint</a>
+      <div class="orbit-system-back">
+        <!-- 3D Orbiting Rings and Tokens -->
+        <div class="ring ring-1">
+          <div class="orbit-icon" style="animation-delay: 0s;">📢 Complaint</div>
+        </div>
+        <div class="ring ring-2">
+          <div class="orbit-icon" style="animation-delay: -5s;">✨ Suggestion</div>
+        </div>
+        <div class="ring ring-3">
+          <div class="orbit-icon" style="animation-delay: -10s;">💡 Feedback</div>
+        </div>
+        <!-- Pulsing Center Orb -->
+        <div class="central-orb"></div>
       </div>
+
+      <div class="hero-content">
+        <div class="hero-badge"> 🚀 </div>
+        <h1>THE FUTURE OF<br>COLLEGE FEEDBACK</h1>
+        <p>Submit decentralized feedback, track complaints on-chain*, and make your voice heard in an immutable way.</p>
+        <div class="hero-actions">
+          <a href="/submit.html" class="btn btn-primary">SUBMIT →</a>
+          <a href="/public-board.html" class="btn btn-outline">Explore Board</a>
+        </div>
+        <!-- <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 24px; opacity: 0.7;">*metaphorically
+        speaking</div> -->
+      </div>
+<!-- rucha -->
     </section>
 
     <!-- Announcements Section -->
-    <section class="mb-32 fade-in fade-in-delay-1">
+    <section class="mb-32 scroll-reveal">
       <div class="card-header" style="border-bottom: none; margin-bottom: 16px;">
         <h2>📢 Announcements</h2>
       </div>
@@ -55,40 +76,40 @@
     </section>
 
     <!-- Features Grid -->
-    <section class="mb-32 fade-in fade-in-delay-2">
-      <div class="page-header">
+    <section class="mb-32">
+      <div class="page-header scroll-reveal">
         <h1>Why Use Our System?</h1>
         <p>A modern, transparent platform for students to be heard</p>
       </div>
       <div class="grid-3">
-        <div class="card feature-card fade-in fade-in-delay-1">
+        <div class="card feature-card scroll-reveal" style="transition-delay: 100ms;">
           <div class="feature-icon">📝</div>
           <h3>Easy Submission</h3>
           <p>Submit feedback, complaints, or suggestions with just a few clicks. Attach files and go anonymous if
             needed.</p>
         </div>
-        <div class="card feature-card fade-in fade-in-delay-2">
+        <div class="card feature-card scroll-reveal" style="transition-delay: 200ms;">
           <div class="feature-icon">🔍</div>
           <h3>Real-Time Tracking</h3>
           <p>Track your complaint status in real-time using your unique complaint ID. Know exactly where things stand.
           </p>
         </div>
-        <div class="card feature-card fade-in fade-in-delay-3">
+        <div class="card feature-card scroll-reveal" style="transition-delay: 300ms;">
           <div class="feature-icon">🤖</div>
           <h3>AI-Powered Analysis</h3>
           <p>Our system automatically detects sentiment, category, and priority to ensure faster resolution.</p>
         </div>
-        <div class="card feature-card fade-in fade-in-delay-1">
+        <div class="card feature-card scroll-reveal" style="transition-delay: 100ms;">
           <div class="feature-icon">👍</div>
           <h3>Upvote System</h3>
           <p>Upvote complaints you agree with. Higher upvoted issues get more visibility and faster attention.</p>
         </div>
-        <div class="card feature-card fade-in fade-in-delay-2">
+        <div class="card feature-card scroll-reveal" style="transition-delay: 200ms;">
           <div class="feature-icon">🤫</div>
           <h3>Confession Wall</h3>
           <p>Share your thoughts anonymously on our confession wall. Express yourself freely without any worries.</p>
         </div>
-        <div class="card feature-card fade-in fade-in-delay-3">
+        <div class="card feature-card scroll-reveal" style="transition-delay: 300ms;">
           <div class="feature-icon">📊</div>
           <h3>Analytics Dashboard</h3>
           <p>Admins get detailed analytics with charts and trends to make data-driven decisions for improvements.</p>
@@ -97,7 +118,7 @@
     </section>
 
     <!-- QR Code Section -->
-    <section class="mb-32 fade-in fade-in-delay-3">
+    <section class="mb-32 scroll-reveal">
       <div class="page-header">
         <h1>📱 Scan & Submit</h1>
         <p>Scan a QR code at any location to submit location-specific feedback instantly</p>

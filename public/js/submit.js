@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if user is logged in
   if (!isLoggedIn()) {
     showToast('Please login to submit feedback.', 'warning');
-    setTimeout(() => { window.location.href = '/login.html'; }, 1500);
+    setTimeout(() => { window.location.replace('/login.html'); }, 1500);
     return;
   }
 

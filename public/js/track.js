@@ -77,7 +77,7 @@ async function trackComplaint() {
         <div class="d-flex justify-between align-center flex-wrap gap-8" style="font-size: 0.85rem; color: var(--text-muted);">
           <span>📅 Submitted: ${formatDate(complaint.createdAt)}</span>
           <span>🏢 Department: ${complaint.department}</span>
-          <span>👍 Upvotes: ${complaint.upvotes.length}</span>
+          <span>👍 ${complaint.upvotes ? complaint.upvotes.length : 0} &nbsp;|&nbsp; 👎 ${complaint.downvotes ? complaint.downvotes.length : 0}</span>
         </div>
 
         ${complaint.aiAnalysis ? `

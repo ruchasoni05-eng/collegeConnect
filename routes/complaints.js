@@ -12,7 +12,7 @@ const {
   trackComplaint,
   updateStatus,
   deleteComplaint,
-  toggleUpvote
+  voteComplaint
 } = require('../controllers/complaintController');
 const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
@@ -34,7 +34,7 @@ router.put('/:id/status', authMiddleware, adminMiddleware, updateStatus);
 // DELETE /api/complaints/:id - Delete complaint (admin only)
 router.delete('/:id', authMiddleware, adminMiddleware, deleteComplaint);
 
-// POST /api/complaints/:id/upvote - Toggle upvote (auth required)
-router.post('/:id/upvote', authMiddleware, toggleUpvote);
+// POST /api/complaints/:id/vote - Toggle vote (auth required)
+router.post('/:id/vote', authMiddleware, voteComplaint);
 
 module.exports = router;

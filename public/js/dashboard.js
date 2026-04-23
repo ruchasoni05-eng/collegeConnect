@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Auth check
   if (!isLoggedIn() || isAdmin()) {
-    window.location.href = '/login.html';
+    window.location.replace('/login.html');
     return;
   }
 
@@ -76,7 +76,7 @@ async function loadMyComplaints() {
         ` : ''}
         <div class="complaint-footer">
           <span class="complaint-date">📅 ${formatDate(c.createdAt)}</span>
-          <span style="color: var(--text-muted);">🏢 ${c.department} &nbsp;|&nbsp; 👍 ${c.upvotes.length} upvotes</span>
+          <span style="color: var(--text-muted);">🏢 ${c.department} &nbsp;|&nbsp; 👍 ${c.upvotes ? c.upvotes.length : 0} &nbsp;|&nbsp; 👎 ${c.downvotes ? c.downvotes.length : 0}</span>
         </div>
       </div>
     `).join('');

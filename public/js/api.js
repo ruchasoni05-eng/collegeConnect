@@ -154,3 +154,10 @@ function updateNavAuth() {
 
 // Update navbar auth state when page loads
 document.addEventListener('DOMContentLoaded', updateNavAuth);
+
+// Handle back-forward cache (bfcache) - if user navigates back after logout, force reload
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});

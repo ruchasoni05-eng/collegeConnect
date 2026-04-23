@@ -25,7 +25,7 @@ const CHART_COLORS = [
 document.addEventListener('DOMContentLoaded', async () => {
   // Auth check — must be admin
   if (!isAdmin()) {
-    window.location.href = '/admin-login.html';
+    window.location.replace('/admin-login.html');
     return;
   }
 

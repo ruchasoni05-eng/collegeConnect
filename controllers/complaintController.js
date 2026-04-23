@@ -178,12 +178,17 @@ exports.deleteComplaint = async (req, res) => {
 };
 
 /**
- * Toggle upvote on a complaint
- * POST /api/complaints/:id/upvote
- * If user already upvoted, removes the upvote. Otherwise adds it.
+ * Toggle vote (upvote/downvote) on a complaint
+ * POST /api/complaints/:id/vote
+ * Expects { voteType: 'up' | 'down' } in body
  */
-exports.toggleUpvote = async (req, res) => {
+exports.voteComplaint = async (req, res) => {
   try {
+    const { voteType } = req.body;
+    if (!['up', 'down'].includes(voteType)) {
+      return res.status(400).json({ message: "Invalid voteType. Must be 'up' or 'down'." });
+    }
+
     const complaint = await Complaint.findById(req.params.id);
 
     if (!complaint) {
@@ -191,23 +196,47 @@ exports.toggleUpvote = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const index = complaint.upvotes.indexOf(userId);
+    
+    // Arrays for upvotes and downvotes
+    const upIndex = complaint.upvotes.indexOf(userId);
+    const downIndex = complaint.downvotes.indexOf(userId);
 
-    if (index > -1) {
-      // Already upvoted — remove the upvote
-      complaint.upvotes.splice(index, 1);
-    } else {
-      // Add upvote
-      complaint.upvotes.push(userId);
+    let message = '';
+
+    if (voteType === 'up') {
+      if (upIndex > -1) {
+        // Already upvoted — remove upvote
+        complaint.upvotes.splice(upIndex, 1);
+        message = 'Upvote removed.';
+      } else {
+        // Add upvote
+        complaint.upvotes.push(userId);
+        message = 'Upvoted!';
+        // Remove downvote if it exists
+        if (downIndex > -1) complaint.downvotes.splice(downIndex, 1);
+      }
+    } else if (voteType === 'down') {
+      if (downIndex > -1) {
+        // Already downvoted — remove downvote
+        complaint.downvotes.splice(downIndex, 1);
+        message = 'Downvote removed.';
+      } else {
+        // Add downvote
+        complaint.downvotes.push(userId);
+        message = 'Downvoted.';
+        // Remove upvote if it exists
+        if (upIndex > -1) complaint.upvotes.splice(upIndex, 1);
+      }
     }
 
     await complaint.save();
 
     res.json({
-      message: index > -1 ? 'Upvote removed.' : 'Upvoted!',
-      upvoteCount: complaint.upvotes.length
+      message,
+      upvoteCount: complaint.upvotes.length,
+      downvoteCount: complaint.downvotes.length
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to toggle upvote.', error: error.message });
+    res.status(500).json({ message: 'Failed to process vote.', error: error.message });
   }
 };

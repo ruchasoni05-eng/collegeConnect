@@ -16,7 +16,15 @@ const app = express();
 app.use(cors());                                    // Enable CORS for all origins
 app.use(express.json());                            // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true }));     // Parse URL-encoded bodies
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static frontend files
+
+// Serve static frontend files and prevent caching of HTML pages
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    }
+  }
+}));
 
 // --- API Routes ---
 app.use('/api/auth', require('./routes/auth'));
@@ -27,6 +35,7 @@ app.use('/api/analytics', require('./routes/analytics'));
 
 // --- Serve frontend for any unmatched route (SPA-style fallback) ---
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
@@ -34,7 +43,7 @@ app.get('*', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`
     ╔══════════════════════════════════════════════╗
     ║  🎓 College Feedback System                  ║

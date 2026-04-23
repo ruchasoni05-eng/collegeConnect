@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Redirect if already logged in
   if (isLoggedIn()) {
-    window.location.href = '/dashboard.html';
+    window.location.replace('/dashboard.html');
     return;
   }
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Redirect to dashboard
       setTimeout(() => {
-        window.location.href = '/dashboard.html';
+        window.location.replace('/dashboard.html');
       }, 1500);
     } catch (error) {
       showToast(error.message, 'error');

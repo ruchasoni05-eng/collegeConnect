@@ -17,7 +17,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadAnnouncements();
   // Generate QR codes
   generateQRCodes();
+  
+  // Initialize Scroll Revel Observer
+  initScrollObserver();
 });
+
+/**
+ * Initialize Intersection Observer for scroll animations
+ */
+function initScrollObserver() {
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.15
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  // Select all items that should animate on scroll, including dynamically loaded ones
+  const revealElements = document.querySelectorAll('.scroll-reveal');
+  revealElements.forEach(el => observer.observe(el));
+}
 
 /**
  * Fetch and display announcements from the API
@@ -38,8 +65,8 @@ async function loadAnnouncements() {
       return;
     }
 
-    container.innerHTML = announcements.map(a => `
-      <div class="announcement-card">
+    container.innerHTML = announcements.map((a, index) => `
+      <div class="announcement-card scroll-reveal" style="transition-delay: ${index * 100}ms;">
         <h3>${a.title}</h3>
         <p>${a.message}</p>
         <div class="announcement-date">${formatDate(a.createdAt)}</div>
@@ -74,16 +101,19 @@ function generateQRCodes() {
   // Build the base URL for QR codes (points to submit page with location pre-filled)
   const baseUrl = window.location.origin + '/submit.html?location=';
 
-  container.innerHTML = locations.map(loc => {
+  container.innerHTML = locations.map((loc, index) => {
     // Use a free QR code API for generation
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(baseUrl + loc.id)}&bgcolor=ffffff&color=6366f1`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(baseUrl + loc.id)}&bgcolor=15162b&color=7b5cff`;
     return `
-      <div class="card qr-card">
+      <div class="card qr-card scroll-reveal" style="transition-delay: ${index * 100}ms;">
         <div class="feature-icon">${loc.emoji}</div>
         <h4>${loc.name}</h4>
-        <img src="${qrUrl}" alt="QR Code for ${loc.name}" width="150" height="150" loading="lazy">
+        <img src="${qrUrl}" alt="QR Code for ${loc.name}" width="150" height="150" loading="lazy" style="filter: drop-shadow(0 0 10px rgba(123, 92, 255, 0.4)); padding: 8px; background: rgba(22, 22, 38, 0.8);">
         <p>Scan to submit feedback</p>
       </div>
     `;
   }).join('');
+  
+  // Re-run observer assignment since these were rendered dynamically
+  setTimeout(() => initScrollObserver(), 100);
 }

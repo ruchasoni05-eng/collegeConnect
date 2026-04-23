@@ -7,7 +7,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Auth check — must be admin
   if (!isAdmin()) {
-    window.location.href = '/admin-login.html';
+    window.location.replace('/admin-login.html');
     return;
   }
 
@@ -104,7 +104,10 @@ async function loadComplaints() {
           <td class="truncate" title="${c.subject}">${c.subject}</td>
           <td><span class="badge badge-${(c.aiAnalysis?.sentiment || 'neutral').toLowerCase()}">${c.aiAnalysis?.sentiment || 'N/A'}</span></td>
           <td><span class="badge badge-${(c.aiAnalysis?.priority || 'medium').toLowerCase()}">${c.aiAnalysis?.priority || 'N/A'}</span></td>
-          <td style="text-align: center;">👍 ${c.upvotes.length}</td>
+          <td style="text-align: center; font-size: 0.85rem; min-width: 65px;">
+            <span style="color:var(--success);">👍 ${c.upvotes ? c.upvotes.length : 0}</span><br>
+            <span style="color:var(--danger);">👎 ${c.downvotes ? c.downvotes.length : 0}</span>
+          </td>
           <td style="font-size: 0.8rem; white-space: nowrap;">${formatDate(c.createdAt)}</td>
           <td>
             <select class="form-control" style="padding: 6px 8px; font-size: 0.8rem; min-width: 110px;"

@@ -66,6 +66,11 @@ const complaintSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Student'
   }],
+  // Array of student IDs who downvoted this complaint
+  downvotes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Student'
+  }],
   // AI-generated analysis results
   aiAnalysis: {
     // Detected category (Infrastructure, Academic, Facility, etc.)
@@ -89,7 +94,6 @@ const complaintSchema = new mongoose.Schema({
 });
 
 // Create indexes for efficient searching
-complaintSchema.index({ complaintId: 1 });
 complaintSchema.index({ student: 1 });
 complaintSchema.index({ status: 1 });
 complaintSchema.index({ department: 1 });

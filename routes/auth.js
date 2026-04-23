@@ -16,4 +16,8 @@ router.post('/login', login);
 // POST /api/auth/admin-login - Admin login
 router.post('/admin-login', adminLogin);
 
+// POST /api/auth/admin-register - Admin registration
+const { adminRegister } = require('../controllers/authController');
+router.post('/admin-register', adminRegister);
+
 module.exports = router;

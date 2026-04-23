@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Public Board - View all college complaints and provide your feedback.">
+  <title>Public Board — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .vote-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/public-board.html" class="active">Public Board</a></li>
+        <li><a href="/submit.html">Submit</a></li>
+        <li><a href="/track.html">Track</a></li>
+        <li><a href="/confessions.html">Confessions</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>🌐 Public Feedback Board</h1>
+      <p>View all complaints and give your feedback using likes and dislikes</p>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="filter-bar fade-in fade-in-delay-1 mb-32">
+      <input type="text" id="search" class="form-control" placeholder="🔍 Search complaints...">
+      <select id="filter-category" class="form-control">
+        <option value="">All Categories</option>
+        <option value="Feedback">Feedback</option>
+        <option value="Complaint">Complaint</option>
+        <option value="Suggestion">Suggestion</option>
+      </select>
+      <select id="filter-department" class="form-control">
+        <option value="">All Departments</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="Information Technology">Information Technology</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Mechanical">Mechanical</option>
+        <option value="Civil">Civil</option>
+        <option value="Electrical">Electrical</option>
+        <option value="General">General</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="loadPublicComplaints()">🔍 Filter</button>
+    </div>
+
+    <!-- Complaints Grid -->
+    <div class="grid-2 fade-in fade-in-delay-2" id="public-complaints-list">
+      <div class="empty-state" style="grid-column: 1/-1;">
+        <p>Loading public board...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/publicBoard.js"></script>
+</body>
+</html>
