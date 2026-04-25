@@ -1,92 +1,92 @@
 // ============================================
 // Student Dashboard Script
-// Loads and displays student's own complaints
+// Fetches Dashboard API and populates Bento Grid
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Auth check
   if (!isLoggedIn() || isAdmin()) {
     window.location.replace('/login.html');
     return;
   }
 
-  // Mobile nav toggle
   const navToggle = document.getElementById('nav-toggle');
   const navLinks = document.getElementById('nav-links');
   if (navToggle) {
     navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
   }
 
-  // Show welcome message with user name
   const user = getUser();
   if (user) {
     document.getElementById('welcome-msg').textContent = `👋 Welcome, ${user.name}!`;
   }
 
-  // Load complaints
-  await loadMyComplaints();
+  await loadDashboard();
 });
 
-/**
- * Fetch and display student's own complaints
- */
-async function loadMyComplaints() {
-  const container = document.getElementById('complaints-list');
-
+async function loadDashboard() {
   try {
-    const complaints = await apiRequest('/complaints/my');
+    const data = await apiRequest('/dashboard/student');
+    
+    // 1. Attendance
+    document.getElementById('attendance-val').textContent = `${data.attendance}%`;
+    const gauge = document.getElementById('attendance-gauge');
+    const color = data.attendance >= 75 ? 'var(--primary-color)' : '#f44336';
+    gauge.style.background = `conic-gradient(${color} ${data.attendance}%, transparent 0%)`;
 
-    if (complaints.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">📭</div>
-          <h3>No submissions yet</h3>
-          <p>You haven't submitted any feedback or complaints.</p>
-          <a href="/submit.html" class="btn btn-primary mt-16">📝 Submit Now</a>
+    // 2. Notices
+    const noticesContainer = document.getElementById('notices-list');
+    if (data.announcements.length === 0) {
+      noticesContainer.innerHTML = '<p>No recent notices.</p>';
+    } else {
+      noticesContainer.innerHTML = data.announcements.map(n => `
+        <div class="notice-item">
+          <h4>${n.isPinned ? '📌 ' : ''}${n.title}</h4>
+          <p>${n.message}</p>
         </div>
-      `;
-      return;
+      `).join('');
     }
 
-    container.innerHTML = complaints.map(c => `
-      <div class="complaint-card">
-        <div class="complaint-meta">
-          <span class="complaint-id">${c.complaintId}</span>
-          <span class="badge badge-${c.category.toLowerCase()}">${c.category}</span>
-          <span class="badge badge-${c.status === 'Pending' ? 'pending' : c.status === 'In Review' ? 'review' : 'resolved'}">${c.status}</span>
-          ${c.aiAnalysis ? `<span class="badge badge-${c.aiAnalysis.priority.toLowerCase()}">${c.aiAnalysis.priority} Priority</span>` : ''}
-        </div>
-        <h3>${c.subject}</h3>
-        <p>${c.message.length > 200 ? c.message.substring(0, 200) + '...' : c.message}</p>
-        ${c.aiAnalysis ? `
-          <div class="ai-analysis">
-            <div class="ai-item">
-              <div class="ai-item-label">AI Category</div>
-              <span class="badge badge-feedback">${c.aiAnalysis.detectedCategory}</span>
-            </div>
-            <div class="ai-item">
-              <div class="ai-item-label">Sentiment</div>
-              <span class="badge badge-${c.aiAnalysis.sentiment.toLowerCase()}">${c.aiAnalysis.sentiment}</span>
-            </div>
-            <div class="ai-item">
-              <div class="ai-item-label">Priority</div>
-              <span class="badge badge-${c.aiAnalysis.priority.toLowerCase()}">${c.aiAnalysis.priority}</span>
-            </div>
+    // 3. Events
+    const eventsContainer = document.getElementById('events-list');
+    if (data.upcomingEvents.length === 0) {
+      eventsContainer.innerHTML = '<p>No upcoming events.</p>';
+    } else {
+      eventsContainer.innerHTML = data.upcomingEvents.map(e => `
+        <div class="event-item">
+          <div>
+            <strong>${e.title}</strong>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">${formatDate(e.date)}</div>
           </div>
-        ` : ''}
-        <div class="complaint-footer">
-          <span class="complaint-date">📅 ${formatDate(c.createdAt)}</span>
-          <span style="color: var(--text-muted);">🏢 ${c.department} &nbsp;|&nbsp; 👍 ${c.upvotes ? c.upvotes.length : 0} &nbsp;|&nbsp; 👎 ${c.downvotes ? c.downvotes.length : 0}</span>
+          <button class="btn btn-outline" style="padding: 4px 12px;" onclick="registerEvent('${e._id}')">Join</button>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
+
+    // 4. Complaints
+    const complaintsContainer = document.getElementById('complaints-list');
+    if (data.complaints.length === 0) {
+      complaintsContainer.innerHTML = '<p>No recent complaints.</p>';
+    } else {
+      complaintsContainer.innerHTML = data.complaints.map(c => `
+        <div class="event-item">
+          <div>
+            <strong>${c.subject}</strong>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">${c.complaintId}</div>
+          </div>
+          <span class="badge badge-${c.status === 'Pending' ? 'pending' : c.status === 'In Review' ? 'review' : 'resolved'}">${c.status}</span>
+        </div>
+      `).join('');
+    }
   } catch (error) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">⚠️</div>
-        <h3>Error loading complaints</h3>
-        <p>${error.message}</p>
-      </div>
-    `;
+    showToast('Failed to load dashboard data: ' + error.message, 'error');
+  }
+}
+
+async function registerEvent(eventId) {
+  try {
+    const res = await apiRequest(`/events/${eventId}/register`, 'POST');
+    showToast(res.message, 'success');
+  } catch (error) {
+    showToast(error.message, 'error');
   }
 }

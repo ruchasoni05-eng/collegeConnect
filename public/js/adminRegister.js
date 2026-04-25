@@ -1,9 +1,10 @@
 // ============================================
-// Admin Registration Page Script
+// Admin Register Script
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (isAdmin()) {
+  const currentUser = getUser();
+  if (currentUser && ['admin', 'superadmin'].includes(currentUser.role)) {
     window.location.replace('/admin-dashboard.html');
     return;
   }
@@ -23,26 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (password.length < 6) {
-      showToast('Password must be at least 6 characters.', 'error');
-      return;
-    }
-
     btn.disabled = true;
-    btn.textContent = '⏳ Creating Account...';
+    btn.textContent = '⏳ Registering...';
 
     try {
-      const data = await apiRequest('/auth/admin-register', {
-        method: 'POST',
-        body: JSON.stringify({ username, password, secretKey })
+      const data = await apiRequest('/auth/admin/register', 'POST', {
+        username, password, secretKey
       });
 
-      saveAuth(data.token, { ...data.admin, role: 'admin' });
+      saveAuth(data.token, { ...data.user, role: data.user.role });
       showToast('Admin registration successful!', 'success');
 
       setTimeout(() => {
         window.location.replace('/admin-dashboard.html');
-      }, 1500);
+      }, 1000);
     } catch (error) {
       showToast(error.message, 'error');
       btn.disabled = false;

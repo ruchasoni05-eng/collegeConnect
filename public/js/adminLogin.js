@@ -1,9 +1,10 @@
 // ============================================
-// Admin Login Page Script
+// Staff Login Script
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (isAdmin()) {
+  const currentUser = getUser();
+  if (currentUser && ['admin', 'superadmin'].includes(currentUser.role)) {
     window.location.replace('/admin-dashboard.html');
     return;
   }
@@ -26,12 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = '⏳ Logging in...';
 
     try {
-      const data = await apiRequest('/auth/admin-login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password })
+      const data = await apiRequest('/auth/admin/login', 'POST', {
+        username, password
       });
+      
 
-      saveAuth(data.token, { ...data.admin, role: 'admin' });
+
+      saveAuth(data.token, { ...data.user, role: data.user.role });
       showToast('Admin login successful!', 'success');
 
       setTimeout(() => {
@@ -39,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1000);
     } catch (error) {
       showToast(error.message, 'error');
-      btn.disabled = false;
       btn.textContent = '🔐 Admin Login';
     }
   });

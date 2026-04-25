@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Portals — College Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🚀</span> CollegeConnect</a>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header scroll-reveal">
+      <h1>Select Your Portal</h1>
+      <p>Log in or register based on your role</p>
+    </div>
+
+    <div class="grid-3" style="margin-bottom: 2rem;">
+      <div class="card feature-card">
+        <div class="feature-icon">🎓</div>
+        <h3>Student Portal</h3>
+        <p>Access your dashboard and submit feedback.</p>
+        <a href="/login.html" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Student Login</a>
+        <a href="/register.html" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%;">Create Account</a>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon">👨‍🏫</div>
+        <h3>Faculty Portal</h3>
+        <p>Manage your classes, students and materials.</p>
+        <a href="/faculty-login.html" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Faculty Login</a>
+        <a href="/faculty-register.html" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%;">Faculty Signup</a>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon">🎭</div>
+        <h3>Club Admin Portal</h3>
+        <p>Organize events and manage your club.</p>
+        <a href="/club-admin-login.html" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Club Admin Login</a>
+        <a href="/club-admin-register.html" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%;">Club Signup</a>
+      </div>
+    </div>
+
+    <div class="grid-1" style="max-width: 400px; margin: 0 auto;">
+      <div class="card feature-card" style="border: 1px solid var(--error-color);">
+        <div class="feature-icon">🛡️</div>
+        <h3>Admin Portal</h3>
+        <p>System administrators only.</p>
+        <a href="/admin-login.html" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">System Admin Login</a>
+        <a href="/admin-register.html" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%;">New Admin Setup</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+</body>
+</html>

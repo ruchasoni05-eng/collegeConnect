@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clubs & Events — College Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🚀</span> CollegeConnect</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/public-board.html">Notices</a></li>
+        <li><a href="/clubs.html" class="active">Clubs</a></li>
+        <li><a href="/materials.html">Materials</a></li>
+        <li><a href="/dashboard.html" id="dash-link">Dashboard</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>🎭 College Clubs</h1>
+      <p>Discover, join, and interact with the best college communities.</p>
+    </div>
+
+    <!-- Clubs Grid -->
+    <div class="grid-3 fade-in fade-in-delay-1" id="clubs-list">
+      <div class="empty-state" style="grid-column: span 3;"><p>Loading clubs...</p></div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/clubs.js"></script>
+</body>
+</html>

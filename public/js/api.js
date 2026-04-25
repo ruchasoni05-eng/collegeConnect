@@ -34,7 +34,8 @@ function saveAuth(token, user) {
 function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = '/login.html';
+  // Push login page, then replace current entry so back goes: login -> home
+  window.location.replace('/login.html');
 }
 
 /**
@@ -43,7 +44,7 @@ function logout() {
 function adminLogout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = '/admin-login.html';
+  window.location.replace('/admin-login.html');
 }
 
 /**
@@ -58,17 +59,29 @@ function isLoggedIn() {
  */
 function isAdmin() {
   const user = getUser();
-  return user && user.role === 'admin';
+  return user && ['admin', 'superadmin', 'faculty', 'club_admin'].includes(user.role);
 }
 
 /**
  * Make an API request with optional authentication
- * @param {string} endpoint - API endpoint (e.g., '/auth/login')
- * @param {object} options - Fetch options (method, body, etc.)
- * @returns {Promise<object>} - Parsed JSON response
+ * Supports: 
+ * - apiRequest('/url', { method: 'POST', body: JSON.stringify({...}) })
+ * - apiRequest('/url', 'POST', {...})
+ * @param {string} endpoint - API endpoint
+ * @param {object|string} optionsOrMethod - Fetch options or HTTP method
+ * @param {object} body - Body object (will be stringified)
  */
-async function apiRequest(endpoint, options = {}) {
+async function apiRequest(endpoint, optionsOrMethod = {}, body = null) {
   const url = `${API_BASE}${endpoint}`;
+  let options = {};
+
+  // Handle shorthand: apiRequest(url, 'POST', data)
+  if (typeof optionsOrMethod === 'string') {
+    options = { method: optionsOrMethod };
+    if (body) options.body = JSON.stringify(body);
+  } else {
+    options = optionsOrMethod;
+  }
 
   // Default headers
   const headers = {
@@ -88,7 +101,18 @@ async function apiRequest(endpoint, options = {}) {
       headers
     });
 
-    const data = await response.json();
+    const contentType = response.headers.get('content-type');
+    let data;
+
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      if (!response.ok) {
+        throw new Error(`Server error (${response.status}): ${text.substring(0, 100)}`);
+      }
+      return text;
+    }
 
     if (!response.ok) {
       throw new Error(data.message || 'Something went wrong');
@@ -96,6 +120,7 @@ async function apiRequest(endpoint, options = {}) {
 
     return data;
   } catch (error) {
+    console.error('API Request Error:', error);
     throw error;
   }
 }
@@ -133,20 +158,21 @@ function updateNavAuth() {
   const authLinks = document.getElementById('auth-links');
   if (!authLinks) return;
 
-  if (isAdmin()) {
-    authLinks.innerHTML = `
-      <a href="/admin-dashboard.html">Dashboard</a>
-      <a href="#" onclick="adminLogout()">Logout</a>
-    `;
-  } else if (isLoggedIn()) {
+  if (isLoggedIn()) {
     const user = getUser();
+    let dashboardUrl = '/dashboard.html';
+
+    if (user.role === 'admin' || user.role === 'superadmin') dashboardUrl = '/admin-dashboard.html';
+    else if (user.role === 'faculty') dashboardUrl = '/staff-dashboard.html';
+    else if (user.role === 'club_admin') dashboardUrl = '/staff-dashboard.html';
+
     authLinks.innerHTML = `
-      <a href="/dashboard.html">Dashboard</a>
+      <a href="${dashboardUrl}">Dashboard</a>
       <a href="#" onclick="logout()">Logout</a>
     `;
   } else {
     authLinks.innerHTML = `
-      <a href="/login.html">Login</a>
+      <a href="/portals.html">Login</a>
       <a href="/register.html">Register</a>
     `;
   }

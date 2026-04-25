@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register a new admin account.">
+  <title>Faculty Registration — College Feedback System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="auth-container fade-in">
+      <div class="card auth-card">
+        <h2>🛠️ Faculty Setup</h2>
+        <p class="subtitle">Create a new faculty account</p>
+
+        <form id="admin-register-form">
+          <div class="form-group">
+            <label for="username">Faculty Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Choose a username" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Create a strong password" minlength="6" required>
+          </div>
+
+          <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" class="form-control" required>
+              <option value="">Select Department</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Mechanical">Mechanical</option>
+              <option value="Civil">Civil</option>
+              <option value="Electrical">Electrical</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="secretKey">Faculty Secret Key</label>
+            <input type="password" id="secretKey" class="form-control" placeholder="Enter faculty authorization key" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;" id="admin-register-btn">
+            🛡️ Create Faculty Account
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Already a faculty member? <a href="/faculty-login.html">Login here</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/facultyRegister.js"></script>
+</body>
+</html>

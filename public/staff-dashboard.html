@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Dashboard — College Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🚀</span> Staff Portal</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/staff-dashboard.html" class="active">Dashboard</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1 id="welcome-msg">👋 Staff Dashboard</h1>
+      <p id="role-msg">Manage your respective department and activities.</p>
+      <div class="d-flex gap-16" style="margin-top: 16px;">
+        <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <!-- Admin Tools -->
+    <section id="admin-tools" style="display:none;" class="fade-in fade-in-delay-1 mb-32">
+      <h2>Global Admin Controls</h2>
+      <div class="card">
+        <p>Post Global Notice, Manage Users, etc.</p>
+        <button class="btn btn-outline">Analytics</button>
+      </div>
+    </section>
+
+    <!-- Faculty Tools -->
+    <section id="faculty-tools" style="display:none;" class="fade-in fade-in-delay-1 mb-24">
+      <h2>👩‍🏫 Faculty Controls</h2>
+      
+      <div class="grid-2 gap-16 mb-16">
+        <div class="card">
+          <h3>📢 Send Notice/Announcement</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Notify students about department news or class updates.</p>
+          <form id="faculty-ann-form" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="text" id="fa-title" placeholder="Notice Title" class="form-control" required>
+            <textarea id="fa-message" placeholder="Detailed announcement..." class="form-control" required></textarea>
+            <button type="submit" class="btn btn-primary">Send Announcement</button>
+          </form>
+        </div>
+ 
+        <div class="card">
+          <h3>📚 Upload Study Material</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Share PPTs, PDFs, or notes with students.</p>
+          <form id="upload-form" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="text" id="mat-title" placeholder="Material Title" class="form-control" required>
+            <input type="text" id="mat-subject" placeholder="Subject Name" class="form-control" required>
+            <input type="file" id="mat-file" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Upload File</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Attendance Section -->
+      <div class="card mb-16">
+        <h3>📋 Mark Attendance</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Select subject, load students from your department, and mark attendance.</p>
+        <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+          <input type="text" id="att-subject" placeholder="Subject Name" class="form-control" style="flex: 1; min-width: 150px;" required>
+          <input type="date" id="att-date" class="form-control" style="flex: 0.6; min-width: 140px;">
+          <button class="btn btn-secondary" onclick="loadStudentsForAttendance()">Load Students</button>
+        </div>
+        <div id="attendance-list" style="max-height: 350px; overflow-y: auto;"></div>
+        <button class="btn btn-primary mt-24" id="submit-attendance-btn" style="display:none; width: 100%;" onclick="submitAttendance()">✅ Submit Attendance</button>
+      </div>
+    </section>
+ 
+    <!-- Club Admin Tools -->
+    <section id="club-tools" style="display:none;" class="fade-in fade-in-delay-1 mb-24">
+      <h2>🎭 Club Admin Controls</h2>
+ 
+      <div class="grid-2 gap-16 mb-16">
+        <div class="card">
+          <h3>📢 Club Notice</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Send updates specifically for your club members.</p>
+          <form id="club-ann-form" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="text" id="ca-title" placeholder="Club Update Title" class="form-control" required>
+            <textarea id="ca-message" placeholder="Message to members..." class="form-control" required></textarea>
+            <button type="submit" class="btn btn-primary">Post Update</button>
+          </form>
+        </div>
+ 
+        <div class="card">
+          <h3>📂 Share Club Materials</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Upload resources like PPTs or PDFs for members.</p>
+          <form id="club-mat-form" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="text" id="cm-title" placeholder="File Title" class="form-control" required>
+            <input type="text" id="cm-topic" placeholder="Topic/Event" class="form-control" required>
+            <input type="file" id="cm-file" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Upload to Club</button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="card mb-16">
+        <h3>✨ Create Club Event</h3>
+        <form id="event-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+          <input type="text" id="ev-title" placeholder="Event Name" class="form-control" required>
+          <input type="date" id="ev-date" class="form-control" required>
+          <textarea id="ev-desc" placeholder="Event Details & Location" class="form-control" required></textarea>
+          <label><input type="checkbox" id="ev-public"> Open for everyone (Non-members)</label>
+          <button type="submit" class="btn btn-primary">Schedule Event</button>
+        </form>
+      </div>
+ 
+      <div class="card">
+        <h3>🤝 Pending Join Requests</h3>
+        <div id="requests-list" style="margin-top: 12px;">Loading requests...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/staff-dashboard.js"></script>
+</body>
+</html>

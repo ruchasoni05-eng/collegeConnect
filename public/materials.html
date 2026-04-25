@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Materials — College Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand"><span>🚀</span> CollegeConnect</a>
+      <button class="nav-toggle" id="nav-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/public-board.html">Notices</a></li>
+        <li><a href="/clubs.html">Clubs</a></li>
+        <li><a href="/materials.html" class="active">Materials</a></li>
+        <li><a href="/dashboard.html" id="dash-link">Dashboard</a></li>
+      </ul>
+      <div class="nav-right">
+        <span id="auth-links"></span>
+        <button class="theme-toggle" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header fade-in">
+      <h1>📚 Study Materials</h1>
+      <p>Download notes and materials uploaded by the faculty.</p>
+    </div>
+    
+    <div style="display:flex; justify-content: center; gap: 16px; margin-bottom: 24px;" class="fade-in">
+      <input type="text" id="subject-filter" placeholder="Search Subject..." class="input" style="max-width: 300px;">
+      <button class="btn btn-primary" onclick="loadMaterials()">Filter</button>
+    </div>
+
+    <!-- Materials Grid -->
+    <div class="grid-3 fade-in fade-in-delay-1" id="materials-list">
+      <div class="empty-state" style="grid-column: span 3;"><p>Loading materials...</p></div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/materials.js"></script>
+</body>
+</html>

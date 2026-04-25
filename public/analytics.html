@@ -13,87 +13,86 @@
   <nav class="navbar">
     <div class="nav-container">
       <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
-      <button class="nav-toggle" id="nav-toggle">☰</button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="/admin-dashboard.html">Dashboard</a></li>
-        <li><a href="/analytics.html" class="active">Analytics</a></li>
-      </ul>
+      <div class="nav-menu-wrapper">
+        <a href="/admin-dashboard.html">DASHBOARD</a>
+        <a href="/analytics.html" class="active">ANALYTICS</a>
+      </div>
       <div class="nav-right">
-        <span id="auth-links"></span>
-        <button class="theme-toggle" id="theme-toggle">🌙</button>
+        <a href="#" onclick="adminLogout()" style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Dashboard Logout</a>
       </div>
     </div>
   </nav>
-
+ 
   <main class="main-content">
     <div class="page-header fade-in">
-      <h1>📊 Analytics Dashboard</h1>
+      <div style="font-size: 4rem; margin-bottom: 20px; filter: drop-shadow(0 0 20px var(--primary-glow));">📊</div>
+      <h1>Analytics Dashboard</h1>
       <p>Visualize complaint trends and department performance</p>
     </div>
-
+ 
     <!-- Stats Cards -->
     <div class="grid-4 mb-32 fade-in fade-in-delay-1" id="stats-cards">
-      <div class="stat-card">
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <div class="stat-icon">📋</div>
         <div class="stat-value" id="stat-total">-</div>
         <div class="stat-label">Total Complaints</div>
       </div>
-      <div class="stat-card">
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <div class="stat-icon">⏳</div>
-        <div class="stat-value" id="stat-pending">-</div>
+        <div class="stat-value" id="stat-pending" style="color: var(--warning);">-</div>
         <div class="stat-label">Pending</div>
       </div>
-      <div class="stat-card">
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <div class="stat-icon">🔍</div>
-        <div class="stat-value" id="stat-review">-</div>
+        <div class="stat-value" id="stat-review" style="color: var(--info);">-</div>
         <div class="stat-label">In Review</div>
       </div>
-      <div class="stat-card">
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <div class="stat-icon">✅</div>
-        <div class="stat-value" id="stat-resolved">-</div>
+        <div class="stat-value" id="stat-resolved" style="color: var(--success);">-</div>
         <div class="stat-label">Resolved</div>
       </div>
     </div>
-
+ 
     <!-- Charts Grid -->
     <div class="grid-2 mb-32 fade-in fade-in-delay-2">
-      <div class="chart-card">
+      <div class="card chart-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <h3>📈 Monthly Trends</h3>
         <div class="chart-wrapper">
           <canvas id="monthlyChart"></canvas>
         </div>
       </div>
-      <div class="chart-card">
+      <div class="card chart-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <h3>🏢 Department-wise Complaints</h3>
         <div class="chart-wrapper">
           <canvas id="departmentChart"></canvas>
         </div>
       </div>
     </div>
-
+ 
     <div class="grid-2 mb-32 fade-in fade-in-delay-3">
-      <div class="chart-card">
+      <div class="card chart-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <h3>📊 Category Distribution</h3>
         <div class="chart-wrapper">
           <canvas id="categoryChart"></canvas>
         </div>
       </div>
-      <div class="chart-card">
+      <div class="card chart-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <h3>💬 Sentiment Analysis</h3>
         <div class="chart-wrapper">
           <canvas id="sentimentChart"></canvas>
         </div>
       </div>
     </div>
-
+ 
     <div class="grid-2 fade-in fade-in-delay-4">
-      <div class="chart-card">
+      <div class="card chart-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <h3>🚦 Status Breakdown</h3>
         <div class="chart-wrapper">
           <canvas id="statusChart"></canvas>
         </div>
       </div>
-      <div class="chart-card">
+      <div class="card chart-card" style="border: none; background: rgba(22, 22, 38, 0.4);">
         <h3>⚡ Priority Distribution</h3>
         <div class="chart-wrapper">
           <canvas id="priorityChart"></canvas>

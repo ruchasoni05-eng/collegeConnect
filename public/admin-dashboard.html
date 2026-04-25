@@ -6,34 +6,128 @@
   <meta name="description" content="Admin dashboard — manage complaints, update statuses, and view analytics.">
   <title>Admin Dashboard — College Feedback System</title>
   <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
       <a href="/" class="nav-brand"><span>🎓</span> CollegeFeedback</a>
-      <button class="nav-toggle" id="nav-toggle">☰</button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="/admin-dashboard.html" class="active">Dashboard</a></li>
-        <li><a href="/analytics.html">Analytics</a></li>
-      </ul>
+      <div class="nav-menu-wrapper">
+        <a href="/admin-dashboard.html" class="active">DASHBOARD</a>
+        <a href="/analytics.html">ANALYTICS</a>
+      </div>
       <div class="nav-right">
-        <span id="auth-links"></span>
-        <button class="theme-toggle" id="theme-toggle">🌙</button>
+        <a href="#" onclick="adminLogout()" style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Dashboard Logout</a>
       </div>
     </div>
   </nav>
 
   <main class="main-content">
     <div class="page-header fade-in">
-      <h1>🛡️ Admin Dashboard</h1>
+      <div style="font-size: 4rem; margin-bottom: 20px; filter: drop-shadow(0 0 20px var(--primary-glow));">🛡️</div>
+      <h1>Admin Dashboard</h1>
       <p>Manage complaints, feedback, and announcements</p>
     </div>
 
     <!-- Quick Actions -->
-    <div class="d-flex gap-16 mb-32 flex-wrap fade-in fade-in-delay-1">
-      <a href="/analytics.html" class="btn btn-primary">📊 View Analytics</a>
-      <button class="btn btn-success" onclick="toggleAnnouncementForm()">📢 New Announcement</button>
-      <button class="btn btn-secondary" onclick="adminLogout()">🚪 Logout</button>
+    <div class="d-flex justify-center gap-16 mb-32 flex-wrap fade-in fade-in-delay-1">
+      <a href="/analytics.html" class="btn btn-view-analytics">📊 VIEW ANALYTICS</a>
+      <button class="btn btn-new-announcement" onclick="toggleAnnouncementForm()">📢 NEW ANNOUNCEMENT</button>
+      <button class="btn btn-primary" onclick="toggleClubModal()">🎭 ADD NEW CLUB</button>
+      <button class="btn btn-admin-logout" onclick="adminLogout()">🚪 LOGOUT</button>
+    </div>
+
+    <!-- Stats Summary Cards (matches screenshot) -->
+    <div class="grid-4 mb-32 fade-in fade-in-delay-1" id="stats-summary">
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4); text-align: center; padding: 24px;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">📋</div>
+        <div class="stat-value" id="stat-total" style="font-size: 2.5rem; font-weight: 800; color: white;">0</div>
+        <div class="stat-label" style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; color: var(--text-secondary); margin-top: 8px;">Total Complaints</div>
+      </div>
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4); text-align: center; padding: 24px;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">⏳</div>
+        <div class="stat-value" id="stat-pending" style="font-size: 2.5rem; font-weight: 800; color: var(--warning);">0</div>
+        <div class="stat-label" style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; color: var(--text-secondary); margin-top: 8px;">Pending</div>
+      </div>
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4); text-align: center; padding: 24px;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">🔍</div>
+        <div class="stat-value" id="stat-inreview" style="font-size: 2.5rem; font-weight: 800; color: var(--info, #3b82f6);">0</div>
+        <div class="stat-label" style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; color: var(--text-secondary); margin-top: 8px;">In Review</div>
+      </div>
+      <div class="card stat-card" style="border: none; background: rgba(22, 22, 38, 0.4); text-align: center; padding: 24px;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">✅</div>
+        <div class="stat-value" id="stat-resolved" style="font-size: 2.5rem; font-weight: 800; color: var(--success);">0</div>
+        <div class="stat-label" style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; color: var(--text-secondary); margin-top: 8px;">Resolved</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Charts (matches screenshot: Monthly Trends + Department-wise) -->
+    <div class="grid-2 mb-32 fade-in fade-in-delay-2" id="dashboard-charts">
+      <div class="card" style="padding: 24px; border: none; background: rgba(22, 22, 38, 0.4);">
+        <h3 style="margin-bottom: 16px;">📈 Monthly Trends</h3>
+        <div style="height: 250px;"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="card" style="padding: 24px; border: none; background: rgba(22, 22, 38, 0.4);">
+        <h3 style="margin-bottom: 16px;">🏢 Department-wise Complaints</h3>
+        <div style="height: 250px;"><canvas id="deptChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Dashboard Charts Row 2 (Category + Sentiment — matches screenshot) -->
+    <div class="grid-2 mb-32 fade-in fade-in-delay-3">
+      <div class="card" style="padding: 24px; border: none; background: rgba(22, 22, 38, 0.4);">
+        <h3 style="margin-bottom: 16px;">📊 Category Distribution</h3>
+        <div style="height: 250px;"><canvas id="categoryChart"></canvas></div>
+      </div>
+      <div class="card" style="padding: 24px; border: none; background: rgba(22, 22, 38, 0.4);">
+        <h3 style="margin-bottom: 16px;">💬 Sentiment Analysis</h3>
+        <div style="height: 250px;"><canvas id="sentimentChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Dashboard Charts Row 3 (Status + Priority — matches screenshot) -->
+    <div class="grid-2 mb-32 fade-in fade-in-delay-4">
+      <div class="card" style="padding: 24px; border: none; background: rgba(22, 22, 38, 0.4);">
+        <h3 style="margin-bottom: 16px;">🚦 Status Breakdown</h3>
+        <div style="height: 250px;"><canvas id="statusChart"></canvas></div>
+      </div>
+      <div class="card" style="padding: 24px; border: none; background: rgba(22, 22, 38, 0.4);">
+        <h3 style="margin-bottom: 16px;">⚡ Priority Distribution</h3>
+        <div style="height: 250px;"><canvas id="priorityChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="card mb-32 fade-in" style="border: none; background: rgba(22, 22, 38, 0.4);">
+      <div class="form-group mb-16">
+        <input type="text" id="search" class="form-control" style="background: rgba(30,30,50,0.5);" placeholder="🔍 Search complaints...">
+      </div>
+      <div class="grid-3 gap-16">
+        <select id="filter-status" class="form-control" style="background: rgba(30,30,50,0.5);">
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Review">In Review</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <select id="filter-category" class="form-control" style="background: rgba(30,30,50,0.5);">
+          <option value="">All Categories</option>
+          <option value="Feedback">Feedback</option>
+          <option value="Complaint">Complaint</option>
+          <option value="Suggestion">Suggestion</option>
+        </select>
+        <select id="filter-department" class="form-control" style="background: rgba(30,30,50,0.5);">
+          <option value="">All Departments</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Mechanical">Mechanical</option>
+          <option value="Civil">Civil</option>
+          <option value="Electrical">Electrical</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      <button class="btn btn-primary mt-24" style="width: 120px; padding: 10px;" onclick="loadComplaints()">🔍 FILTER</button>
     </div>
 
     <!-- Announcement Form (hidden by default) -->
@@ -55,57 +149,56 @@
       </form>
     </div>
 
-    <!-- Filter & Search Bar -->
-    <div class="filter-bar fade-in fade-in-delay-1">
-      <input type="text" id="search" class="form-control" placeholder="🔍 Search complaints...">
-      <select id="filter-status" class="form-control">
-        <option value="">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="In Review">In Review</option>
-        <option value="Resolved">Resolved</option>
-      </select>
-      <select id="filter-category" class="form-control">
-        <option value="">All Categories</option>
-        <option value="Feedback">Feedback</option>
-        <option value="Complaint">Complaint</option>
-        <option value="Suggestion">Suggestion</option>
-      </select>
-      <select id="filter-department" class="form-control">
-        <option value="">All Departments</option>
-        <option value="Computer Science">Computer Science</option>
-        <option value="Information Technology">Information Technology</option>
-        <option value="Electronics">Electronics</option>
-        <option value="Mechanical">Mechanical</option>
-        <option value="Civil">Civil</option>
-        <option value="Electrical">Electrical</option>
-        <option value="General">General</option>
-      </select>
-      <button class="btn btn-primary btn-sm" onclick="loadComplaints()">🔍 Filter</button>
-    </div>
-
     <!-- Complaints Table -->
-    <div class="card fade-in fade-in-delay-2">
+    <div class="card fade-in" style="padding: 0; overflow: hidden; border: none; background: rgba(22, 22, 38, 0.4);">
       <div class="table-container">
         <table>
-          <thead>
+          <thead style="background: rgba(255, 255, 255, 0.05);">
             <tr>
               <th>ID</th>
-              <th>Student</th>
-              <th>Dept</th>
-              <th>Category</th>
-              <th>Subject</th>
-              <th>Sentiment</th>
-              <th>Priority</th>
-              <th>Upvotes</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th>STUDENT</th>
+              <th>DEPT</th>
+              <th>CATEGORY</th>
+              <th>SUBJECT</th>
+              <th>SENTIMENT</th>
+              <th>PRIORITY</th>
+              <th>UPVOTES</th>
+              <th>DATE</th>
+              <th>STATUS</th>
+              <th>ACTIONS</th>
             </tr>
           </thead>
           <tbody id="complaints-table">
             <tr><td colspan="11" class="text-center" style="padding: 40px;">Loading complaints...</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Club Creation Modal/Form (hidden by default) -->
+    <div class="modal" id="club-modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center;">
+      <div class="card" style="max-width: 500px; width: 90%;">
+        <div class="card-header">
+          <h3>🎭 Create New Club</h3>
+          <button class="btn btn-sm btn-secondary" onclick="toggleClubModal()">✕</button>
+        </div>
+        <form id="club-form">
+          <div class="form-group">
+            <label for="club-name">Club Name</label>
+            <input type="text" id="club-name" class="form-control" placeholder="e.g., CodeX Club" required>
+          </div>
+          <div class="form-group">
+            <label for="club-desc">Description</label>
+            <textarea id="club-desc" class="form-control" placeholder="What is this club about?" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="club-admin">Assign Club Admin</label>
+            <select id="club-admin" class="form-control" required>
+              <option value="">Loading admins...</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Create Club</button>
+        </form>
       </div>
     </div>
   </main>

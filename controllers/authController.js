@@ -1,177 +1,123 @@
 // ============================================
 // Auth Controller
-// Handles student registration, login, and admin login
+// Separated auth logic for Student, Admin, Faculty, Club Admin
 // ============================================
 
 const jwt = require('jsonwebtoken');
 const Student = require('../models/Student');
-const Admin = require('../models/Admin');
+const User = require('../models/User');
 
-/**
- * Register a new student
- * POST /api/auth/register
- */
-exports.register = async (req, res) => {
+// --- Helper Functions ---
+const generateToken = (payload, expiresIn = '7d') => {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
+};
+
+// =============================================
+// STUDENT AUTHENTICATION
+// =============================================
+
+exports.studentRegister = async (req, res) => {
   try {
     const { name, studentId, department, email, password } = req.body;
+    const existingStudent = await Student.findOne({ $or: [{ email }, { studentId }] });
+    if (existingStudent) return res.status(400).json({ message: 'Student with this email or ID already exists.' });
 
-    // Check if student already exists
-    const existingStudent = await Student.findOne({
-      $or: [{ email }, { studentId }]
-    });
-    if (existingStudent) {
-      return res.status(400).json({ message: 'Student with this email or ID already exists.' });
-    }
-
-    // Create new student (password is hashed by the model pre-save hook)
     const student = await Student.create({ name, studentId, department, email, password });
+    const token = generateToken({ id: student._id, studentId: student.studentId, role: 'student' });
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: student._id, studentId: student.studentId, role: 'student' },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.status(201).json({
-      message: 'Registration successful!',
-      token,
-      student: {
-        id: student._id,
-        name: student.name,
-        studentId: student.studentId,
-        department: student.department,
-        email: student.email
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Registration failed.', error: error.message });
-  }
+    res.status(201).json({ message: 'Registration successful!', token, student: { id: student._id, name: student.name, studentId: student.studentId, department: student.department, email: student.email } });
+  } catch (error) { res.status(500).json({ message: 'Registration failed.', error: error.message }); }
 };
 
-/**
- * Student login
- * POST /api/auth/login
- */
-exports.login = async (req, res) => {
+exports.studentLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Find student by email
     const student = await Student.findOne({ email });
-    if (!student) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
-    }
+    if (!student) return res.status(401).json({ message: 'Invalid email or password.' });
 
-    // Compare passwords
     const isMatch = await student.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
-    }
+    if (!isMatch) return res.status(401).json({ message: 'Invalid email or password.' });
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: student._id, studentId: student.studentId, role: 'student' },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.json({
-      message: 'Login successful!',
-      token,
-      student: {
-        id: student._id,
-        name: student.name,
-        studentId: student.studentId,
-        department: student.department,
-        email: student.email
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Login failed.', error: error.message });
-  }
+    const token = generateToken({ id: student._id, studentId: student.studentId, role: 'student', department: student.department });
+    res.json({ message: 'Login successful!', token, student: { id: student._id, name: student.name, studentId: student.studentId, department: student.department, email: student.email } });
+  } catch (error) { res.status(500).json({ message: 'Login failed.', error: error.message }); }
 };
 
-/**
- * Admin login
- * POST /api/auth/admin-login
- */
-exports.adminLogin = async (req, res) => {
+// =============================================
+// STAFF AUTHENTICATION HELPER
+// =============================================
+const handleStaffRegister = async (req, res, targetRole) => {
+  try {
+    const { username, password, department, secretKey } = req.body;
+
+    // Each role has its own secret key
+    let expectedKey;
+    if (targetRole === 'admin') expectedKey = process.env.ADMIN_SECRET_KEY;
+    else if (targetRole === 'faculty') expectedKey = process.env.FACULTY_SECRET_KEY;
+    else if (targetRole === 'club_admin') expectedKey = process.env.CLUB_ADMIN_SECRET_KEY;
+    else expectedKey = process.env.ADMIN_SECRET_KEY;
+
+    if (secretKey !== expectedKey) return res.status(403).json({ message: 'Invalid secret key.' });
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) return res.status(400).json({ message: 'Staff with this username already exists.' });
+
+    const user = await User.create({ username, password, role: targetRole, department: targetRole === 'faculty' ? department : 'General' });
+    const token = generateToken({ id: user._id, username: user.username, role: user.role, department: user.department });
+
+    res.status(201).json({ message: `${targetRole} registration successful!`, token, user: { id: user._id, username: user.username, role: user.role, department: user.department } });
+  } catch (error) { res.status(500).json({ message: `${targetRole} registration failed.`, error: error.message }); }
+};
+
+const handleStaffLogin = async (req, res, targetRole) => {
   try {
     const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) return res.status(401).json({ message: 'Invalid username or password.' });
 
-    // Find admin by username
-    const admin = await Admin.findOne({ username });
-    if (!admin) {
-      return res.status(401).json({ message: 'Invalid username or password.' });
+    if (user.role !== targetRole && user.role !== 'superadmin') {
+      return res.status(403).json({ message: `Access denied. You are not a ${targetRole}.` });
     }
 
-    // Compare passwords
-    const isMatch = await admin.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid username or password.' });
-    }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) return res.status(401).json({ message: 'Invalid username or password.' });
 
-    // Generate JWT token with admin role
-    const token = jwt.sign(
-      { id: admin._id, username: admin.username, role: 'admin' },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.json({
-      message: 'Admin login successful!',
-      token,
-      admin: {
-        id: admin._id,
-        username: admin.username,
-        role: admin.role
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Admin login failed.', error: error.message });
-  }
+    const token = generateToken({ id: user._id, username: user.username, role: user.role, department: user.department });
+    res.json({ message: `${targetRole} login successful!`, token, user: { id: user._id, username: user.username, role: user.role, department: user.department } });
+  } catch (error) { res.status(500).json({ message: `${targetRole} login failed.`, error: error.message }); }
 };
 
-/**
- * Register a new admin
- * POST /api/auth/admin-register
- */
-exports.adminRegister = async (req, res) => {
+// =============================================
+// ADMIN
+// =============================================
+exports.adminRegister = (req, res) => handleStaffRegister(req, res, 'admin');
+exports.adminLogin = (req, res) => handleStaffLogin(req, res, 'admin');
+
+// =============================================
+// FACULTY
+// =============================================
+exports.facultyRegister = (req, res) => handleStaffRegister(req, res, 'faculty');
+exports.facultyLogin = (req, res) => handleStaffLogin(req, res, 'faculty');
+
+// =============================================
+// CLUB ADMIN
+// =============================================
+exports.clubAdminRegister = (req, res) => handleStaffRegister(req, res, 'club_admin');
+exports.clubAdminLogin = (req, res) => handleStaffLogin(req, res, 'club_admin');
+ 
+// =============================================
+// STAFF MANAGEMENT (Admin Only)
+// =============================================
+exports.getStaff = async (req, res) => {
   try {
-    const { username, password, secretKey } = req.body;
-
-    // Check secret key
-    if (secretKey !== process.env.ADMIN_SECRET_KEY) {
-      return res.status(403).json({ message: 'Invalid secret key.' });
-    }
-
-    // Check if admin already exists
-    const existingAdmin = await Admin.findOne({ username });
-    if (existingAdmin) {
-      return res.status(400).json({ message: 'Admin with this username already exists.' });
-    }
-
-    // Create new admin
-    const admin = await Admin.create({ username, password, role: 'admin' });
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: admin._id, username: admin.username, role: 'admin' },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.status(201).json({
-      message: 'Admin registration successful!',
-      token,
-      admin: {
-        id: admin._id,
-        username: admin.username,
-        role: admin.role
-      }
-    });
+    const { role } = req.query;
+    const filter = {};
+    if (role) filter.role = role;
+    
+    // Do not return password hashing or sensitive fields
+    const staff = await User.find(filter).select('-password');
+    res.json(staff);
   } catch (error) {
-    res.status(500).json({ message: 'Admin registration failed.', error: error.message });
+    res.status(500).json({ message: 'Failed to fetch staff list.', error: error.message });
   }
 };

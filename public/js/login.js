@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = '⏳ Logging in...';
 
     try {
-      const data = await apiRequest('/auth/login', {
+      const data = await apiRequest('/auth/student/login', {
         method: 'POST',
         body: JSON.stringify({ email, password })
       });

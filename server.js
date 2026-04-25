@@ -32,6 +32,16 @@ app.use('/api/complaints', require('./routes/complaints'));
 app.use('/api/confessions', require('./routes/confessions'));
 app.use('/api/announcements', require('./routes/announcements'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/clubs', require('./routes/clubs'));
+app.use('/api/events', require('./routes/events'));
+app.use('/api/materials', require('./routes/materials'));
+app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/attendance', require('./routes/attendance'));
+
+// --- Catch-all API 404 ---
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ message: `Route ${req.method} ${req.url} not found.` });
+});
 
 // --- Serve frontend for any unmatched route (SPA-style fallback) ---
 app.get('*', (req, res) => {

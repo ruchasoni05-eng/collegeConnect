@@ -1,21 +1,30 @@
 // ============================================
 // Admin Dashboard Script
 // Loads complaints table with filters,
-// handles status updates, deletions, and announcements
+// handles status updates, deletions, announcements,
+// manages clubs, and renders full analytics charts
 // ============================================
 
+// Chart color palette
+const COLORS = {
+  primary: '#6366f1',
+  primaryLight: '#818cf8',
+  success: '#10b981',
+  danger: '#ef4444',
+  warning: '#f59e0b',
+  info: '#3b82f6',
+  purple: '#8b5cf6',
+  pink: '#ec4899',
+  teal: '#14b8a6',
+  orange: '#f97316'
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
-  // Auth check — must be admin
-  if (!isAdmin()) {
+  // Auth check — must be admin or superadmin
+  const currentUser = getUser();
+  if (!currentUser || !['admin', 'superadmin'].includes(currentUser.role)) {
     window.location.replace('/admin-login.html');
     return;
-  }
-
-  // Mobile nav toggle
-  const navToggle = document.getElementById('nav-toggle');
-  const navLinks = document.getElementById('nav-links');
-  if (navToggle) {
-    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
   }
 
   // Announcement form handler
@@ -31,13 +40,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-      await apiRequest('/announcements', {
-        method: 'POST',
-        body: JSON.stringify({ title, message })
-      });
+      await apiRequest('/announcements', 'POST', { title, message });
       showToast('Announcement posted!', 'success');
       annForm.reset();
       toggleAnnouncementForm();
+    } catch (error) {
+      showToast(error.message, 'error');
+    }
+  });
+
+  // Club form handler
+  const clubForm = document.getElementById('club-form');
+  clubForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('club-name').value.trim();
+    const description = document.getElementById('club-desc').value.trim();
+    const adminId = document.getElementById('club-admin').value;
+
+    try {
+      await apiRequest('/clubs', 'POST', { name, description, adminId });
+      showToast('Club created successfully!', 'success');
+      clubForm.reset();
+      toggleClubModal();
     } catch (error) {
       showToast(error.message, 'error');
     }
@@ -48,16 +72,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Enter') loadComplaints();
   });
 
-  // Load complaints
-  await loadComplaints();
+  // Load dashboard data
+  await refreshDashboard();
 });
+
+/**
+ * Main dashboard refresh function
+ */
+async function refreshDashboard() {
+  await loadComplaints();
+  await loadAnalyticsSummary();
+  await loadClubAdmins();
+}
 
 /**
  * Toggle the announcement form visibility
  */
-function toggleAnnouncementForm() {
+window.toggleAnnouncementForm = function() {
   const card = document.getElementById('announcement-form-card');
   card.style.display = card.style.display === 'none' ? 'block' : 'none';
+}
+
+/**
+ * Toggle the Club Modal visibility
+ */
+window.toggleClubModal = function() {
+  const modal = document.getElementById('club-modal');
+  modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
 }
 
 /**
@@ -137,10 +178,7 @@ async function loadComplaints() {
  */
 async function updateStatus(id, status) {
   try {
-    await apiRequest(`/complaints/${id}/status`, {
-      method: 'PUT',
-      body: JSON.stringify({ status })
-    });
+    await apiRequest(`/complaints/${id}/status`, 'PUT', { status });
     showToast(`Status updated to "${status}"`, 'success');
   } catch (error) {
     showToast(error.message, 'error');
@@ -160,5 +198,154 @@ async function deleteComplaint(id) {
     await loadComplaints();
   } catch (error) {
     showToast(error.message, 'error');
+  }
+}
+
+/**
+ * Load Analytics Summary and populate ALL 6 charts + 4 stat cards
+ */
+async function loadAnalyticsSummary() {
+  try {
+    const data = await apiRequest('/analytics');
+    
+    // Update Stats Cards
+    document.getElementById('stat-total').textContent = data.totals.total;
+    document.getElementById('stat-pending').textContent = data.totals.pending;
+    document.getElementById('stat-inreview').textContent = data.totals.inReview;
+    document.getElementById('stat-resolved').textContent = data.totals.resolved;
+
+    // ---- Chart 1: Monthly Trends (Line) ----
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const trendLabels = data.monthlyTrends.map(t => `${months[t._id.month - 1]} ${t._id.year}`);
+    const trendValues = data.monthlyTrends.map(t => t.count);
+
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+        labels: trendLabels,
+        datasets: [{
+          label: 'Complaints',
+          data: trendValues,
+          borderColor: COLORS.primary,
+          backgroundColor: COLORS.primary + '20',
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: COLORS.primary,
+          pointRadius: 5,
+          pointHoverRadius: 8
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { display: false } } }
+      }
+    });
+
+    // ---- Chart 2: Department-wise (Bar) ----
+    const CHART_COLORS = [COLORS.primary, COLORS.success, COLORS.danger, COLORS.warning, COLORS.info, COLORS.purple, COLORS.pink, COLORS.teal, COLORS.orange];
+
+    new Chart(document.getElementById('deptChart'), {
+      type: 'bar',
+      data: {
+        labels: data.departmentStats.map(s => s._id || 'Unknown'),
+        datasets: [{
+          label: 'Complaints',
+          data: data.departmentStats.map(s => s.count),
+          backgroundColor: CHART_COLORS.slice(0, data.departmentStats.length),
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { display: false } } }
+      }
+    });
+
+    // ---- Chart 3: Category Distribution (Doughnut) ----
+    new Chart(document.getElementById('categoryChart'), {
+      type: 'doughnut',
+      data: {
+        labels: data.categoryStats.map(s => s._id || 'Unknown'),
+        datasets: [{
+          data: data.categoryStats.map(s => s.count),
+          backgroundColor: [COLORS.primary, COLORS.danger, COLORS.warning],
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.8)', padding: 16 } } } }
+    });
+
+    // ---- Chart 4: Sentiment Analysis (Pie) ----
+    const sentimentColorMap = { Positive: COLORS.success, Neutral: '#94a3b8', Negative: COLORS.danger };
+    new Chart(document.getElementById('sentimentChart'), {
+      type: 'pie',
+      data: {
+        labels: data.sentimentStats.map(s => s._id || 'Unknown'),
+        datasets: [{
+          data: data.sentimentStats.map(s => s.count),
+          backgroundColor: data.sentimentStats.map(s => sentimentColorMap[s._id] || '#94a3b8'),
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.8)', padding: 16 } } } }
+    });
+
+    // ---- Chart 5: Status Breakdown (Doughnut) ----
+    new Chart(document.getElementById('statusChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'In Review', 'Resolved'],
+        datasets: [{
+          data: [data.totals.pending, data.totals.inReview, data.totals.resolved],
+          backgroundColor: [COLORS.warning, COLORS.info, COLORS.success],
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.8)', padding: 16 } } } }
+    });
+
+    // ---- Chart 6: Priority Distribution (Bar) ----
+    const priorityColorMap = { High: COLORS.danger, Medium: COLORS.warning, Low: COLORS.success };
+    new Chart(document.getElementById('priorityChart'), {
+      type: 'bar',
+      data: {
+        labels: data.priorityStats.map(s => s._id || 'Unknown'),
+        datasets: [{
+          label: 'Complaints',
+          data: data.priorityStats.map(s => s.count),
+          backgroundColor: data.priorityStats.map(s => priorityColorMap[s._id] || '#94a3b8'),
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { display: false } } }
+      }
+    });
+
+  } catch (err) {
+    console.error('Analytics load failed', err);
+  }
+}
+
+/**
+ * Load list of club admins for the assignment dropdown
+ */
+async function loadClubAdmins() {
+  try {
+    const admins = await apiRequest('/auth/staff?role=club_admin');
+    const select = document.getElementById('club-admin');
+    
+    if (admins.length === 0) {
+      select.innerHTML = '<option value="">No Club Admins found. Register one first.</option>';
+      return;
+    }
+
+    select.innerHTML = '<option value="">-- Select Admin --</option>' + 
+      admins.map(a => `<option value="${a._id}">${a.username}</option>`).join('');
+  } catch (err) {
+    showToast('Failed to load staff list', 'error');
   }
 }

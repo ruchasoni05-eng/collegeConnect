@@ -10,13 +10,13 @@ const {
   createAnnouncement,
   deleteAnnouncement
 } = require('../controllers/announcementController');
-const { authMiddleware, adminMiddleware } = require('../middleware/auth');
+const { authMiddleware, adminMiddleware, anyStaffMiddleware } = require('../middleware/auth');
 
 // GET /api/announcements - Get all announcements (public)
 router.get('/', getAnnouncements);
 
-// POST /api/announcements - Create announcement (admin only)
-router.post('/', authMiddleware, adminMiddleware, createAnnouncement);
+// POST /api/announcements - Create announcement (any staff)
+router.post('/', authMiddleware, anyStaffMiddleware, createAnnouncement);
 
 // DELETE /api/announcements/:id - Delete announcement (admin only)
 router.delete('/:id', authMiddleware, adminMiddleware, deleteAnnouncement);

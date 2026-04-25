@@ -24,14 +24,21 @@ exports.getAnnouncements = async (req, res) => {
  */
 exports.createAnnouncement = async (req, res) => {
   try {
-    const { title, message } = req.body;
-
+    const { title, message, clubId, isPinned, targetDepartments } = req.body;
+ 
     if (!title || !message) {
       return res.status(400).json({ message: 'Title and message are required.' });
     }
-
-    const announcement = await Announcement.create({ title, message });
-
+ 
+    const announcement = await Announcement.create({
+      title,
+      message,
+      postedBy: req.user.id,
+      clubId: req.user.role === 'club_admin' ? (clubId || null) : null,
+      isPinned: isPinned || false,
+      targetDepartments: targetDepartments || []
+    });
+ 
     res.status(201).json({
       message: 'Announcement posted!',
       announcement

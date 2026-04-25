@@ -18,13 +18,23 @@ const COLORS = {
 };
 
 const CHART_COLORS = [
-  COLORS.primary, COLORS.success, COLORS.danger, COLORS.warning,
-  COLORS.info, COLORS.purple, COLORS.pink, COLORS.teal, COLORS.orange
+  '#6366f1', '#10b981', '#ef4444', '#f59e0b',
+  '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
 ];
+ 
+// Global Chart.js Defaults for premium look
+Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(22, 22, 38, 0.9)';
+Chart.defaults.plugins.tooltip.borderColor = 'rgba(255, 255, 255, 0.1)';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 20;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Auth check — must be admin
-  if (!isAdmin()) {
+  // Auth check — must be admin or superadmin
+  const currentUser = getUser();
+  if (!currentUser || !['admin', 'superadmin'].includes(currentUser.role)) {
     window.location.replace('/admin-login.html');
     return;
   }
@@ -93,7 +103,14 @@ function renderMonthlyChart(trends) {
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        y: { 
+          beginAtZero: true, 
+          ticks: { stepSize: 1 },
+          grid: { color: 'rgba(255,255,255,0.05)', borderColor: 'transparent' }
+        },
+        x: {
+          grid: { display: false, borderColor: 'transparent' }
+        }
       }
     }
   });
@@ -120,7 +137,14 @@ function renderDepartmentChart(stats) {
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        y: { 
+          beginAtZero: true, 
+          ticks: { stepSize: 1 },
+          grid: { color: 'rgba(255,255,255,0.05)', borderColor: 'transparent' }
+        },
+        x: {
+          grid: { display: false, borderColor: 'transparent' }
+        }
       }
     }
   });
@@ -226,7 +250,14 @@ function renderPriorityChart(stats) {
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        y: { 
+          beginAtZero: true, 
+          ticks: { stepSize: 1 },
+          grid: { color: 'rgba(255,255,255,0.05)', borderColor: 'transparent' }
+        },
+        x: {
+          grid: { display: false, borderColor: 'transparent' }
+        }
       }
     }
   });

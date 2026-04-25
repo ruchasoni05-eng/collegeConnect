@@ -39,12 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = '⏳ Creating Account...';
 
     try {
-      const data = await apiRequest('/auth/register', {
+      const data = await apiRequest('/auth/student/register', {
         method: 'POST',
         body: JSON.stringify({ name, studentId, department, email, password })
       });
 
-      // Save auth data
       saveAuth(data.token, { ...data.student, role: 'student' });
       showToast('Registration successful! Redirecting...', 'success');
 

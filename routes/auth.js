@@ -1,23 +1,40 @@
 // ============================================
 // Auth Routes
-// Student registration, login, and admin login
+// Separated registration and login for Student, Admin, Faculty, Club Admin
 // ============================================
 
 const express = require('express');
 const router = express.Router();
-const { register, login, adminLogin } = require('../controllers/authController');
+const { 
+  studentRegister, 
+  studentLogin, 
+  adminLogin, 
+  adminRegister,
+  facultyLogin,
+  facultyRegister,
+  clubAdminLogin,
+  clubAdminRegister,
+  getStaff
+} = require('../controllers/authController');
+const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
-// POST /api/auth/register - Register a new student
-router.post('/register', register);
+// Student
+router.post('/student/register', studentRegister);
+router.post('/student/login', studentLogin);
 
-// POST /api/auth/login - Student login
-router.post('/login', login);
+// Admin
+router.post('/admin/register', adminRegister);
+router.post('/admin/login', adminLogin);
 
-// POST /api/auth/admin-login - Admin login
-router.post('/admin-login', adminLogin);
+// Faculty
+router.post('/faculty/register', facultyRegister);
+router.post('/faculty/login', facultyLogin);
 
-// POST /api/auth/admin-register - Admin registration
-const { adminRegister } = require('../controllers/authController');
-router.post('/admin-register', adminRegister);
+// Club Admin
+router.post('/club-admin/register', clubAdminRegister);
+router.post('/club-admin/login', clubAdminLogin);
+ 
+// Staff Management (Admin only)
+router.get('/staff', authMiddleware, adminMiddleware, getStaff);
 
 module.exports = router;
